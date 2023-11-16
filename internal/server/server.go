@@ -1,8 +1,10 @@
 package server
 
 import (
+	"context"
 	"github.com/jmoiron/sqlx"
 	"github.com/labstack/echo/v4"
+	"time"
 )
 
 const (
@@ -25,21 +27,14 @@ func NewServer(port string, db *sqlx.DB) *Server {
 }
 
 func (s *Server) Run() error {
-	err := s.echo.Start(s.port)
-	if err != nil {
+	if err := s.MapHandlers(s.echo); err != nil {
 		return err
 	}
-	return nil
+	if err := s.echo.Start(s.port); err != nil {
+		return err
+	}
 
-	//if err := s.MapHandlers(s.echo); err != nil {
-	//	return err
-	//}
-	//quit := make(chan os.Signal, 1)
-	//signal.Notify(quit, os.Interrupt, syscall.SIGTERM)
-	//<-quit
-	//
-	//ctx, shutdown := context.WithTimeout(context.Background(), ctxTimeout*time.Second)
-	//defer shutdown()
-	//
-	//return s.echo.Server.Shutdown(ctx)
+	ctx, shutdown := context.WithTimeout(context.Background(), ctxTimeout*time.Second)
+	defer shutdown()
+	return s.echo.Server.Shutdown(ctx)
 }

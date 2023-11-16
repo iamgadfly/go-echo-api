@@ -1,7 +1,10 @@
 package http
 
 import (
-	"github.com/YOUR-USER-OR-ORG-NAME/YOUR-REPO-NAME/internal/users"
+	"fmt"
+	"github.com/AleksK1NG/api-mc/pkg/httpErrors"
+	"github.com/iamgadfly/go-echo-api/internal/models"
+	"github.com/iamgadfly/go-echo-api/internal/users"
 	"github.com/labstack/echo/v4"
 	"net/http"
 )
@@ -10,40 +13,35 @@ type userHandlers struct {
 	userUC users.UseCase
 }
 
-// NewAuthHandlers Auth handlers constructor
-func NewAuthHandlers(userUC users.UseCase) *userHandlers {
-	return &userHandlers{userUC: userUC}
-	//return &authHandlers{cfg: cfg, authUC: authUC, sessUC: sessUC, logger: log}
+func NewAuthHandlers(userUC users.UseCase) userHandlers {
+	return userHandlers{userUC: userUC}
 }
 
 func (h *userHandlers) Register() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		return c.String(http.StatusOK, "this is go!!!")
-		//	span, ctx := opentracing.StartSpanFromContext(utils.GetRequestCtx(c), "auth.Register")
-		//	defer span.Finish()
-		//
-		//	user := &models.User{}
-		//	if err := utils.ReadRequest(c, user); err != nil {
-		//		utils.LogResponseError(c, h.logger, err)
-		//		return c.JSON(httpErrors.ErrorResponse(err))
-		//	}
-		//
-		//	createdUser, err := h.authUC.Register(ctx, user)
-		//	if err != nil {
-		//		utils.LogResponseError(c, h.logger, err)
-		//		return c.JSON(httpErrors.ErrorResponse(err))
-		//	}
-		//
-		//	sess, err := h.sessUC.CreateSession(ctx, &models.Session{
-		//		UserID: createdUser.User.UserID,
-		//	}, h.cfg.Session.Expire)
-		//	if err != nil {
-		//		utils.LogResponseError(c, h.logger, err)
-		//		return c.JSON(httpErrors.ErrorResponse(err))
-		//	}
-		//
-		//	c.SetCookie(utils.CreateSessionCookie(h.cfg, sess))
-		//
-		//	return c.JSON(http.StatusCreated, createdUser)
+		data := echo.Map{}
+		c.Bind(&data)
+		user := models.User{}
+		userToken, err := h.userUC.Register(data, &user)
+		if err != nil {
+			return c.JSON(httpErrors.ErrorResponse(err))
+		}
+
+		return c.JSON(http.StatusCreated, userToken)
+	}
+}
+
+func (h *userHandlers) Test() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		//data, _ := c.FormParams()
+		data := echo.Map{}
+		c.Bind(&data)
+		fmt.Println(data)
+		fmt.Println(data["test"])
+		fmt.Println(data["name"])
+
+		return c.JSON(http.StatusOK, map[string]string{
+			"yes": "true",
+		})
 	}
 }

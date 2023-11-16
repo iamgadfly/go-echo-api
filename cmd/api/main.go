@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/YOUR-USER-OR-ORG-NAME/YOUR-REPO-NAME/internal/server"
-	"github.com/YOUR-USER-OR-ORG-NAME/YOUR-REPO-NAME/pkg/mysql"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/iamgadfly/go-echo-api/internal/server"
+	mysql "github.com/iamgadfly/go-echo-api/pkg/mysql"
 	"github.com/spf13/viper"
 	"log"
 )

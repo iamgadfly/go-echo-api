@@ -1,11 +1,13 @@
 package http
 
-import "github.com/labstack/echo/v4"
+import (
+	"github.com/labstack/echo/v4"
+)
 
 func MapUserRoutes(authGroup *echo.Group, h userHandlers) {
 	// mw *middleware.MiddlewareManager
-
 	authGroup.POST("/register", h.Register())
+	authGroup.POST("/test", h.Test())
 	//authGroup.POST("/login", h.Login())
 	//authGroup.POST("/logout", h.Logout())
 	//authGroup.GET("/find", h.FindByName())

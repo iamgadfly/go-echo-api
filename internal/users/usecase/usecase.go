@@ -1,28 +1,33 @@
 package usecase
 
 import (
-	"context"
-	"github.com/AleksK1NG/api-mc/pkg/httpErrors"
-	"github.com/YOUR-USER-OR-ORG-NAME/YOUR-REPO-NAME/internal/core"
-	"github.com/YOUR-USER-OR-ORG-NAME/YOUR-REPO-NAME/internal/users/repository"
-	"net/http"
+	"fmt"
+	"github.com/iamgadfly/go-echo-api/internal/models"
+	"github.com/iamgadfly/go-echo-api/internal/users/repository"
 )
 
 type userUC struct {
 	userRepo repository.UsersRepo
 }
 
-func NewUserUseCase(userRepo repository.UsersRepo) *userUC {
-	return &userUC{
-		userRepo: userRepo,
+func NewUserUseCase(userRepo *repository.UsersRepo) userUC {
+	return userUC{
+		userRepo: *userRepo,
 	}
 }
 
-func (u userUC) Register(ctx context.Context, user *core.User) (core.UserWithToken, error) {
+// (core.UserWithToken, error)
 
-	existsUser, err := u.userRepo.FindByEmail(ctx, user)
-	if existsUser != nil || err == nil {
-		return nil, httpErrors.NewRestErrorWithMessage(http.StatusBadRequest, httpErrors.ErrEmailAlreadyExists, nil)
-	}
+func (u userUC) Register(ctx map[string]interface{}, user *models.User) (models.UserWithToken, error) {
+	fmt.Println(ctx)
+	return models.UserWithToken{}, nil
+
+	//return models.UserWithToken{}, nil
+	//existsUser, err := u.userRepo.FindByEmail(ctx, user)
+	//if existsUser != nil || err == nil {
+	//	return nil, httpErrors.NewRestErrorWithMessage(http.StatusBadRequest, httpErrors.ErrEmailAlreadyExists, nil)
+	//}
+
+	//return u.userRepo, nil
 	//u.userRepo
 }
