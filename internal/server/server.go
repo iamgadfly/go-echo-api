@@ -2,8 +2,10 @@ package server
 
 import (
 	"context"
+	"github.com/iamgadfly/go-echo-api/config"
 	"github.com/jmoiron/sqlx"
 	"github.com/labstack/echo/v4"
+	"go.uber.org/zap"
 	"time"
 )
 
@@ -16,14 +18,16 @@ const (
 
 // Server struct
 type Server struct {
-	port string
-	echo *echo.Echo
-	db   *sqlx.DB
+	cfg    *config.Config
+	port   string
+	echo   *echo.Echo
+	db     *sqlx.DB
+	logger *zap.SugaredLogger
 }
 
 // NewServer New Server constructor
-func NewServer(port string, db *sqlx.DB) *Server {
-	return &Server{echo: echo.New(), db: db, port: port}
+func NewServer(cfg *config.Config, port string, db *sqlx.DB, logger *zap.SugaredLogger) *Server {
+	return &Server{cfg: cfg, echo: echo.New(), db: db, port: port, logger: logger}
 }
 
 func (s *Server) Run() error {

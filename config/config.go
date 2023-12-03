@@ -2,6 +2,7 @@ package config
 
 import (
 	"errors"
+	"fmt"
 	"github.com/spf13/viper"
 	"log"
 	"time"
@@ -48,6 +49,7 @@ type MysqlConfig struct {
 	MysqlUser     string
 	MysqlPassword string
 	MysqlDbname   string
+	MysqlConnect  string
 }
 
 // Cookie config
@@ -73,11 +75,10 @@ type Store struct {
 // Load config file from given path
 func LoadConfig(filename string) (*viper.Viper, error) {
 	v := viper.New()
+	v.SetConfigFile("config/config.yml")
 
-	v.SetConfigName(filename)
-	v.AddConfigPath(".")
-	v.AutomaticEnv()
 	if err := v.ReadInConfig(); err != nil {
+		fmt.Println(err)
 		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
 			return nil, errors.New("config file not found")
 		}

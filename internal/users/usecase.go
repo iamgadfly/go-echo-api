@@ -5,7 +5,10 @@ import (
 )
 
 type UseCase interface {
-	Register(ctx map[string]interface{}, user *models.User) (models.UserWithToken, error)
+	Register(user *models.User) (*models.User, error)
+	GetUsers() ([]models.User, error)
+	Login(password, email string) (models.User, error)
+	//Login() (password string, error)
 	//Login(ctx context.Context, user *core.User) (core.UserWithToken, error)
 	//Update(ctx context.Context, user *core.User) (*core.User, error)
 	//FindByName(ctx context.Context, name string, query *utils.PaginationQuery) (*core.UsersList, error)

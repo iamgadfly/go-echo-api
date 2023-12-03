@@ -1,20 +1,34 @@
 package main
 
 import (
+	"github.com/AleksK1NG/api-mc/pkg/utils"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/iamgadfly/go-echo-api/config"
 	"github.com/iamgadfly/go-echo-api/internal/server"
 	mysql "github.com/iamgadfly/go-echo-api/pkg/mysql"
-	"github.com/spf13/viper"
+	"go.uber.org/zap"
 	"log"
 )
 
 func main() {
-	log.Println("Starting api server")
-	viper.SetConfigFile(".env")
-	viper.ReadInConfig()
-	db, err := mysql.NewMysqlDB(viper.GetString("DB_DRIVER"), viper.GetString("DB_CONNECT"))
+	configPath := utils.GetConfigPath("")
+	cfgFile, err := config.LoadConfig(configPath)
+	if err != nil {
+		log.Fatalf("LoadConfig: %v", err)
+	}
 
-	s := server.NewServer(viper.GetString("APP_PORT"), db)
+	cfg, err := config.ParseConfig(cfgFile)
+	if err != nil {
+		log.Fatalf("ParseConfig: %v", err)
+	}
+	logger, err := zap.NewProduction()
+	if err != nil {
+		log.Fatal(err)
+	}
+	sugar := logger.Sugar()
+	db, err := mysql.NewMysqlDB("mysql", cfg.Mysql.MysqlConnect)
+	sugar.Info("starting server!")
+	s := server.NewServer(cfg, cfg.Server.Port, db, sugar)
 	if err = s.Run(); err != nil {
 		log.Fatal(err)
 	}

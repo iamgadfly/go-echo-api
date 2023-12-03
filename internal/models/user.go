@@ -5,7 +5,7 @@ import "golang.org/x/crypto/bcrypt"
 type User struct {
 	ID                 int64  `json:"id" db:"id"`
 	Name               string `json:"name" db:"name"`
-	Surname            string `json:"surname" db: "surname"`
+	Surname            string `json:"surname" db:"surname"`
 	Password           string `json:"password" db:"password"`
 	Email              string `json:"email" db:"email"`
 	Balance            int64  `json:"balance" db:"balance"`
@@ -20,12 +20,7 @@ type UserWithToken struct {
 }
 
 type UsersList struct {
-	TotalCount int     `json:"total_count"`
-	TotalPages int     `json:"total_pages"`
-	Page       int     `json:"page"`
-	Size       int     `json:"size"`
-	HasMore    bool    `json:"has_more"`
-	Users      []*User `json:"users"`
+	Users []*User `json:"users"`
 }
 
 func (u *User) HashPassword() error {
@@ -34,5 +29,12 @@ func (u *User) HashPassword() error {
 		return err
 	}
 	u.Password = string(hashedPassword)
+	return nil
+}
+
+func (u *User) ComparePasswords(password string) error {
+	if err := bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(password)); err != nil {
+		return err
+	}
 	return nil
 }
