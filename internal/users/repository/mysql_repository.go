@@ -60,3 +60,11 @@ func (r *UsersRepo) Login(password, email string) (models.User, error) {
 
 	return user, nil
 }
+func (r *UsersRepo) GetById(id interface{}) (*models.User, error) {
+	user := models.User{}
+	err := r.db.Get(&user, GetByID, id)
+	if err != nil {
+		return &user, err
+	}
+	return &user, nil
+}

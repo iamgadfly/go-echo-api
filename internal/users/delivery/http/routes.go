@@ -5,18 +5,19 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 )
 
-func MapUserRoutes(authGroup *echo.Group, h userHandlers) {
+func MapUserRoutes(e *echo.Group, h userHandlers) {
 	// mw *middleware.MiddlewareManager
-	authGroup.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
-		Format: `[{$time_rfc3339}] ${status} ${method} ${path} ${host} ${remote_ip} ${latency_human}` + "\n",
+	//authGroup.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
+	//	Format: `[{$time_rfc3339}] ${status} ${method} ${path} ${host} ${remote_ip} ${latency_human}` + "\n",
+	//}))
+
+	e.POST("/register", h.Register())
+	e.POST("/login", h.Login())
+
+	e.Use(middleware.JWTWithConfig(middleware.JWTConfig{
+		SigningKey: []byte(h.cfg.Server.JwtSecretKey),
 	}))
 
-	authGroup.POST("/register", h.Register())
-	authGroup.POST("/login", h.Login())
-	authGroup.GET("/all", h.GetUsers())
-	//authGroup.POST("/login", h.Login())
-	//authGroup.POST("/logout", h.Logout())
-	//authGroup.GET("/find", h.FindByName())
-	//authGroup.GET("/all", h.GetUsers())
+	e.GET("/all", h.GetUsers())
 	//authGroup.GET("/:user_id", h.GetUserByID())
 }

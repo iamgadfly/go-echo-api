@@ -8,6 +8,7 @@ type UseCase interface {
 	Register(user *models.User) (*models.User, error)
 	GetUsers() ([]models.User, error)
 	Login(password, email string) (models.UserWithToken, error)
+	GetByID(id interface{}) (*models.User, error)
 	//Login() (password string, error)
 	//Login(ctx context.Context, user *core.User) (core.UserWithToken, error)
 	//Update(ctx context.Context, user *core.User) (*core.User, error)

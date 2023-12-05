@@ -56,3 +56,13 @@ func (u userUC) Login(password, email string) (models.UserWithToken, error) {
 		Token: token,
 	}, nil
 }
+
+func (u userUC) GetByID(id interface{}) (*models.User, error) {
+	user, err := u.userRepo.GetById(id)
+	u.logger.Info(id)
+	if err != nil {
+		return user, err
+	}
+
+	return user, nil
+}
