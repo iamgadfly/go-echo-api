@@ -5,6 +5,9 @@
 # ==============================================================================
 # Go migrate mysql
 
+run:
+	go run cmd/api/main.go
+
 force:
 	migrate -database "mysql://go:12345678@tcp(localhost:3306)/go_api" -path migrations  force 1
 

@@ -25,6 +25,7 @@ mysql:
   MysqlUser: go
   MysqlPassword: 12345678
   MysqlDbname: go_api
+  MysqlConnect: root:@(127.0.0.1:3306)/go_api
 
 cookie:
   Name: jwt-token

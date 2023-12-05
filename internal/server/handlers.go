@@ -10,8 +10,8 @@ import (
 
 func (s *Server) MapHandlers(e *echo.Echo) error {
 	uRepo := userRepository.NewUsersRepository(s.db)
-	userUC := userUseCase.NewUserUseCase(uRepo)
-	userHandlers := userHttp.NewAuthHandlers(userUC)
+	userUC := userUseCase.NewUserUseCase(s.cfg, uRepo, s.logger)
+	userHandlers := userHttp.NewAuthHandlers(s.cfg, userUC, s.logger)
 
 	v1 := e.Group("/api/v1")
 	usersGroup := v1.Group("/users")
