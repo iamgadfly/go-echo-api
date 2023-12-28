@@ -1,6 +1,10 @@
 package server
 
 import (
+	productHttp "github.com/iamgadfly/go-echo-api/internal/products/delivery/http"
+	productRepository "github.com/iamgadfly/go-echo-api/internal/products/repository"
+	productUC "github.com/iamgadfly/go-echo-api/internal/products/usecase"
+
 	userHttp "github.com/iamgadfly/go-echo-api/internal/users/delivery/http"
 	userRepository "github.com/iamgadfly/go-echo-api/internal/users/repository"
 	userUseCase "github.com/iamgadfly/go-echo-api/internal/users/usecase"
@@ -16,6 +20,15 @@ func (s *Server) MapHandlers(e *echo.Echo) error {
 	v1 := e.Group("/api/v1")
 	usersGroup := v1.Group("/users")
 	userHttp.MapUserRoutes(usersGroup, userHandlers)
+
+	//pRepo := products.Repository.
+	pRepo := productRepository.NewUProductsRepository(s.db)
+	productUC := productUC.NewProductUseCase(s.cfg, pRepo, s.logger)
+	productHandlers := productHttp.NewProductHandlers(productUC, s.cfg, s.logger)
+	//pRepo := productHttp.NewProductHandlers()
+	productsGroup := v1.Group("/products")
+	productHttp.MapProductRoutes(productsGroup, productHandlers)
+
 	//newsHttp.MapNewsRoutes(newsGroup, newsHandlers, mw)
 
 	return nil
