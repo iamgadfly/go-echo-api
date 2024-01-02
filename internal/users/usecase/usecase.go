@@ -5,6 +5,7 @@ import (
 	"github.com/iamgadfly/go-echo-api/internal/models"
 	"github.com/iamgadfly/go-echo-api/internal/users/repository"
 	"github.com/iamgadfly/go-echo-api/pkg/jwt"
+	"github.com/labstack/echo/v4"
 	"go.uber.org/zap"
 )
 
@@ -22,7 +23,7 @@ func NewUserUseCase(cfg *config.Config, userRepo *repository.UsersRepo, logger *
 	}
 }
 
-func (u userUC) Register(user *models.User) (*models.User, error) {
+func (u userUC) Register(c echo.Context, user *models.User) (*models.User, error) {
 	user.HashPassword()
 	createUser, err := u.userRepo.Create(user)
 	if err != nil {
@@ -40,8 +41,8 @@ func (u userUC) GetUsers() ([]models.User, error) {
 	return userList, nil
 }
 
-func (u userUC) Login(password, email string) (models.UserWithToken, error) {
-	user, err := u.userRepo.Login(password, email)
+func (u userUC) Login(userLogin models.UserLogin) (models.UserWithToken, error) {
+	user, err := u.userRepo.Login(userLogin)
 	if err != nil {
 		return models.UserWithToken{}, err
 	}

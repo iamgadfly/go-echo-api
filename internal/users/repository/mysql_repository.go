@@ -48,13 +48,13 @@ func (r *UsersRepo) GetUsers() ([]models.User, error) {
 	return list, nil
 }
 
-func (r *UsersRepo) Login(password, email string) (models.User, error) {
+func (r *UsersRepo) Login(u models.UserLogin) (models.User, error) {
 	user := models.User{}
-	if err := r.db.Get(&user, FindByEmail, email); err != nil {
+	if err := r.db.Get(&user, FindByEmail, u.Email); err != nil {
 		return user, nil
 	}
 
-	if err := user.ComparePasswords(password); err != nil {
+	if err := user.ComparePasswords(u.Password); err != nil {
 		return user, err
 	}
 

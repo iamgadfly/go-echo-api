@@ -4,10 +4,10 @@ import "golang.org/x/crypto/bcrypt"
 
 type User struct {
 	ID                 int64  `json:"id" db:"id"`
-	Name               string `json:"name" db:"name"`
-	Surname            string `json:"surname" db:"surname"`
-	Password           string `json:"password" db:"password"`
-	Email              string `json:"email" db:"email"`
+	Name               string `json:"name" db:"name" validate:"required,min=1,max=30"`
+	Surname            string `json:"surname" db:"surname" validate:"required,max=30"`
+	Password           string `json:"password" db:"password" validate:"required,min=4"`
+	Email              string `json:"email" db:"email" validate:"required,email"`
 	Balance            int64  `json:"balance" db:"balance"`
 	IsRegisteredSocial bool   `json:"is_register_social" db:"is_register_social"`
 	IsPaid             bool   `json:"is_paid" db:"is_paid"`
@@ -17,6 +17,11 @@ type User struct {
 type UserWithToken struct {
 	User  *User  `json:"user"`
 	Token string `json:"token"`
+}
+
+type UserLogin struct {
+	Email    string `json:"email" db:"email" validate:"required,email"`
+	Password string `json:"password" db:"password" validate:"required,min=4"`
 }
 
 type UsersList struct {

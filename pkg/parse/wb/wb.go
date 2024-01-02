@@ -1,6 +1,7 @@
 package wb
 
 import (
+	"context"
 	"github.com/iamgadfly/go-echo-api/internal/models"
 	"github.com/tidwall/gjson"
 	"io/ioutil"
@@ -9,10 +10,10 @@ import (
 	"strings"
 )
 
-func ParseByLink(link string) (models.Product, error) {
+func ParseByLink(ctx context.Context, link string) (models.Product, error) {
 	id := GetId(link)
 	url := "https://card.wb.ru/cards/detail?appType=1&curr=rub&dest=-1257786&regions=80,38,83,4,64,33,68,70,30,40,86,75,69,1,31,66,110,48,22,71,114&spp=35&nm=" + id
-	resp, err := sendData(url)
+	resp, err := sendData(ctx, url)
 	if err != nil {
 		return models.Product{}, err
 	}
@@ -34,8 +35,10 @@ func ParseByLink(link string) (models.Product, error) {
 	}, nil
 }
 
-func sendData(url string) (*http.Response, error) {
-	resp, err := http.Get(url)
+func sendData(ctx context.Context, url string) (*http.Response, error) {
+	req, _ := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	client := &http.Client{}
+	resp, err := client.Do(req)
 	if err != nil {
 		return resp, err
 	}

@@ -1,6 +1,7 @@
 package http
 
 import (
+	"fmt"
 	"github.com/AleksK1NG/api-mc/pkg/httpErrors"
 	"github.com/iamgadfly/go-echo-api/config"
 	"github.com/iamgadfly/go-echo-api/internal/models"
@@ -27,11 +28,15 @@ func NewAuthHandlers(cfg *config.Config, userUC users.UseCase, logger *zap.Sugar
 
 func (h *userHandlers) Register() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		user := models.User{}
-		if err := c.Bind(&user); err != nil {
+		u := models.User{}
+		if err := c.Bind(&u); err != nil {
+			fmt.Println(err.Error())
 			return c.JSON(httpErrors.ErrorResponse(err))
 		}
-		createdUser, err := h.userUC.Register(&user)
+		if err := req.ValidateStruct(u); err != nil {
+			return c.JSON(httpErrors.ErrorResponse(err))
+		}
+		createdUser, err := h.userUC.Register(c, &u)
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, map[string]string{
 				"error": err.Error(),
@@ -54,11 +59,15 @@ func (h *userHandlers) GetUsers() echo.HandlerFunc {
 
 func (h *userHandlers) Login() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		data, err := req.ParseReq(c)
-		if err != nil {
-			return err
+		u := models.UserLogin{}
+		if err := c.Bind(&u); err != nil {
+			return c.JSON(http.StatusBadRequest, err.Error())
 		}
-		res, er := h.userUC.Login(data["password"].(string), data["email"].(string))
+		if err := req.ValidateStruct(u); err != nil {
+			return c.JSON(http.StatusBadRequest, err.Error())
+		}
+
+		res, er := h.userUC.Login(u)
 		if er != nil {
 			return c.JSON(http.StatusBadRequest, map[string]string{
 				"error": er.Error(),
