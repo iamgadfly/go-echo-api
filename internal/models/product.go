@@ -12,3 +12,18 @@ type Product struct {
 	Color       string `json:"color" db:"color"`
 	Link        string `json:"link" db:"link"`
 }
+
+//func NewNullString(str string) sql.NullString {
+//	return sql.NullString{String: str, Valid: true}
+//}
+
+//func (ns *NullString) MarshalJSON() ([]byte, error) {
+//	if !ns.Valid {
+//		return []byte("null"), nil
+//	}
+//	return json.Marshal(ns.String)
+//}
+
+type ProductList struct {
+	Products *[]Product `json:"products"`
+}

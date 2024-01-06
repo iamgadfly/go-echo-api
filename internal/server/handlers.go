@@ -22,7 +22,7 @@ func (s *Server) MapHandlers(e *echo.Echo) error {
 	userHttp.MapUserRoutes(usersGroup, userHandlers)
 
 	//pRepo := products.Repository.
-	pRepo := productRepository.NewUProductsRepository(s.db)
+	pRepo := productRepository.NewUProductsRepository(s.db, s.logger)
 	productUC := productUC.NewProductUseCase(s.cfg, pRepo, s.logger)
 	productHandlers := productHttp.NewProductHandlers(productUC, s.cfg, s.logger)
 	//pRepo := productHttp.NewProductHandlers()

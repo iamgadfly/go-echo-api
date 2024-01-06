@@ -8,6 +8,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"go.uber.org/zap"
 	"net/http"
+	"time"
 )
 
 type ProductHandlers struct {
@@ -32,5 +33,16 @@ func (h *ProductHandlers) ParseByLink() echo.HandlerFunc {
 			return c.JSON(http.StatusBadRequest, err.Error())
 		}
 		return c.JSON(http.StatusOK, prod)
+	}
+}
+
+func (h *ProductHandlers) GetCsv() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		err := h.productUC.WriteCsv()
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, err.Error())
+		}
+
+		return c.JSON(http.StatusOK, "created at "+time.Now().String())
 	}
 }

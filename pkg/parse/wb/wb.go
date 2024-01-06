@@ -19,11 +19,10 @@ func ParseByLink(ctx context.Context, link string) (models.Product, error) {
 	}
 
 	ShopId, _ := strconv.Atoi(id)
-	body, _ := ioutil.ReadAll(resp.Body)
-	Name := gjson.Get(string(body), "data.products.0.name").String()
-	SalePrice := gjson.Get(string(body), "data.products.0.salePriceU").Int() / 100
-	Price := gjson.Get(string(body), "data.products.0.priceU").Int() / 100
-	Color := gjson.Get(string(body), "data.products.0.colors.0.name").String()
+	Name := gjson.Get(resp, "data.products.0.name").String()
+	SalePrice := gjson.Get(resp, "data.products.0.salePriceU").Int() / 100
+	Price := gjson.Get(resp, "data.products.0.priceU").Int() / 100
+	Color := gjson.Get(resp, "data.products.0.colors.0.name").String()
 
 	return models.Product{
 		Name:      Name,
@@ -35,14 +34,21 @@ func ParseByLink(ctx context.Context, link string) (models.Product, error) {
 	}, nil
 }
 
-func sendData(ctx context.Context, url string) (*http.Response, error) {
+func sendData(ctx context.Context, url string) (string, error) {
 	req, _ := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	client := &http.Client{}
 	resp, err := client.Do(req)
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return resp, err
+		return "", err
 	}
-	return resp, nil
+
+	if err != nil {
+		return "", err
+	}
+	return string(body), nil
 }
 
 func GetId(link string) string {
