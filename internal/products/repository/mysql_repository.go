@@ -39,6 +39,15 @@ func (r ProductRepo) SearchByShopId(prod models.Product) error {
 	return nil
 }
 
+func (r ProductRepo) CreateBatch(products []models.Product) error {
+	_, err := r.db.NamedExec(`INSERT INTO products (name,price,sale_price,color,shop_id)
+	VALUES (:name, :price, :sale_price, :color, :shop_id) ON DUPLICATE KEY UPDATE sale_price=sale_price AND price=price`, products)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (r ProductRepo) GetProducts() ([]models.Product, error) {
 	var products []models.Product
 	err := r.db.Select(&products, GetProducts)

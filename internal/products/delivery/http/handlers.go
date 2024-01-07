@@ -8,6 +8,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"go.uber.org/zap"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -44,5 +45,23 @@ func (h *ProductHandlers) GetCsv() echo.HandlerFunc {
 		}
 
 		return c.JSON(http.StatusOK, "created at "+time.Now().String())
+	}
+}
+
+func (h *ProductHandlers) ParseWbCat() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		data, _ := req.ParseReq(c)
+
+		var urls []string
+		for n := 1; n <= 100; n++ {
+			urls = append(urls, data["link"].(string)+"&page="+strconv.Itoa(n))
+		}
+
+		err := h.productUC.ParseWbCat(urls)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, err.Error())
+		}
+
+		return c.JSON(http.StatusOK, "start..")
 	}
 }

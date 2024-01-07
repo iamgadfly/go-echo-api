@@ -10,10 +10,16 @@ import (
 	"strings"
 )
 
+type ProductCat struct {
+	Id   string `json:"id"`
+	Name string `json:"name"`
+	Cat  string `json:"cat"`
+}
+
 func ParseByLink(ctx context.Context, link string) (models.Product, error) {
 	id := GetId(link)
 	url := "https://card.wb.ru/cards/detail?appType=1&curr=rub&dest=-1257786&regions=80,38,83,4,64,33,68,70,30,40,86,75,69,1,31,66,110,48,22,71,114&spp=35&nm=" + id
-	resp, err := sendData(ctx, url)
+	resp, err := SendData(ctx, url)
 	if err != nil {
 		return models.Product{}, err
 	}
@@ -34,7 +40,7 @@ func ParseByLink(ctx context.Context, link string) (models.Product, error) {
 	}, nil
 }
 
-func sendData(ctx context.Context, url string) (string, error) {
+func SendData(ctx context.Context, url string) (string, error) {
 	req, _ := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	client := &http.Client{}
 	resp, err := client.Do(req)
@@ -54,4 +60,25 @@ func sendData(ctx context.Context, url string) (string, error) {
 func GetId(link string) string {
 	raw := strings.Split(link, "/")
 	return raw[len(raw)-2]
+}
+
+func getCategories(body string) []ProductCat {
+	var categories []ProductCat
+	i := 0
+	for {
+		id := gjson.Get(body, strconv.Itoa(i)+".id").String()
+		name := gjson.Get(body, strconv.Itoa(i)+".name").String()
+		cat := gjson.Get(body, strconv.Itoa(i)+".query").String()
+		categories = append(categories, ProductCat{
+			Cat:  cat,
+			Id:   id,
+			Name: name,
+		})
+
+		if name == "" {
+			break
+		}
+		i++
+	}
+	return categories
 }

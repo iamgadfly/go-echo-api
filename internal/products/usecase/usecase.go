@@ -9,6 +9,7 @@ import (
 	"github.com/iamgadfly/go-echo-api/pkg/parse/avito"
 	"github.com/iamgadfly/go-echo-api/pkg/parse/ozon"
 	"github.com/iamgadfly/go-echo-api/pkg/parse/wb"
+	"github.com/tidwall/gjson"
 	"go.uber.org/zap"
 	"os"
 	"strconv"
@@ -48,13 +49,48 @@ func (p ProductUseCase) ParseByLink(link string) (models.Product, error) {
 		return prod, err
 	}
 	err = p.productRepo.SearchByShopId(prod)
-	p.logger.Info(err)
-
 	if err != nil {
 		return prod, err
 	}
 
 	return prod, nil
+}
+
+func (p ProductUseCase) ParseWbCat(urls []string) error {
+	for _, link := range urls {
+		go p.parseProducts(context.Background(), link)
+	}
+
+	return nil
+}
+
+func (p ProductUseCase) parseProducts(ctx context.Context, link string) {
+	var products []models.Product
+	body, _ := wb.SendData(ctx, link)
+	i := 0
+	for {
+		Name := gjson.Get(body, "data.products."+strconv.Itoa(i)+".name").String()
+		ShopId := gjson.Get(body, "data.products."+strconv.Itoa(i)+".id").Int()
+		SalePrice := gjson.Get(body, "data.products."+strconv.Itoa(i)+".salePriceU").Int() / 100
+		Price := gjson.Get(body, "data.products."+strconv.Itoa(i)+".priceU").Int() / 100
+		Color := gjson.Get(body, "data.products."+strconv.Itoa(i)+".colors.0.name").String()
+
+		products = append(products, models.Product{
+			Name:      Name,
+			SalePrice: SalePrice,
+			Price:     Price,
+			Color:     Color,
+			ShopId:    int(ShopId),
+			Link:      "https://www.wildberries.ru/catalog/" + strconv.Itoa(int(ShopId)) + "/detail.aspx",
+		})
+
+		i++
+		if Name == "" {
+			break
+		}
+	}
+
+	p.productRepo.CreateBatch(products)
 }
 
 func (p ProductUseCase) WriteCsv() error {
