@@ -3,7 +3,7 @@ package usecase
 import (
 	"github.com/iamgadfly/go-echo-api/config"
 	"github.com/iamgadfly/go-echo-api/internal/models"
-	"github.com/iamgadfly/go-echo-api/internal/users/repository"
+	"github.com/iamgadfly/go-echo-api/internal/users"
 	"github.com/iamgadfly/go-echo-api/pkg/jwt"
 	"github.com/labstack/echo/v4"
 	"go.uber.org/zap"
@@ -11,14 +11,14 @@ import (
 
 type userUC struct {
 	cfg      *config.Config
-	userRepo repository.UsersRepo
+	userRepo users.Repository
 	logger   *zap.SugaredLogger
 }
 
-func NewUserUseCase(cfg *config.Config, userRepo *repository.UsersRepo, logger *zap.SugaredLogger) userUC {
+func NewUserUseCase(cfg *config.Config, userRepo users.Repository, logger *zap.SugaredLogger) userUC {
 	return userUC{
 		cfg:      cfg,
-		userRepo: *userRepo,
+		userRepo: userRepo,
 		logger:   logger,
 	}
 }

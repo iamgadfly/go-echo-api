@@ -5,6 +5,7 @@ import (
 	"github.com/iamgadfly/go-echo-api/internal/models"
 	"github.com/jmoiron/sqlx"
 	"go.uber.org/zap"
+	"golang.org/x/net/context"
 )
 
 type ProductRepo struct {
@@ -40,8 +41,7 @@ func (r ProductRepo) SearchByShopId(prod models.Product) error {
 }
 
 func (r ProductRepo) CreateBatch(products []models.Product) error {
-	_, err := r.db.NamedExec(`INSERT INTO products (name,price,sale_price,color,shop_id)
-	VALUES (:name, :price, :sale_price, :color, :shop_id) ON DUPLICATE KEY UPDATE sale_price=sale_price AND price=price`, products)
+	_, err := r.db.NamedExec(CreateBatch, products)
 	if err != nil {
 		return err
 	}
@@ -52,6 +52,15 @@ func (r ProductRepo) GetProducts() ([]models.Product, error) {
 	var products []models.Product
 	err := r.db.Select(&products, GetProducts)
 	if err != nil {
+		return []models.Product{}, err
+	}
+
+	return products, nil
+}
+
+func (r ProductRepo) Search(ctx context.Context, word string) ([]models.Product, error) {
+	var products []models.Product
+	if err := r.db.SelectContext(ctx, &products, Search, word+"%"); err != nil {
 		return []models.Product{}, err
 	}
 

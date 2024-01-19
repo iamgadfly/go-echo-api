@@ -1,6 +1,7 @@
 package http
 
 import (
+	"context"
 	"github.com/iamgadfly/go-echo-api/config"
 	"github.com/iamgadfly/go-echo-api/internal/products"
 	"github.com/iamgadfly/go-echo-api/internal/products/usecase"
@@ -51,7 +52,6 @@ func (h *ProductHandlers) GetCsv() echo.HandlerFunc {
 func (h *ProductHandlers) ParseWbCat() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		data, _ := req.ParseReq(c)
-
 		var urls []string
 		for n := 1; n <= 100; n++ {
 			urls = append(urls, data["link"].(string)+"&page="+strconv.Itoa(n))
@@ -63,5 +63,18 @@ func (h *ProductHandlers) ParseWbCat() echo.HandlerFunc {
 		}
 
 		return c.JSON(http.StatusOK, "start..")
+	}
+}
+
+func (h *ProductHandlers) Search() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		ctx, cancel := context.WithTimeout(context.Background(), time.Duration(time.Second*10))
+		defer cancel()
+		data, _ := req.ParseReq(c)
+		res, err := h.productUC.Search(ctx, data["word"].(string))
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, err.Error())
+		}
+		return c.JSON(http.StatusOK, res)
 	}
 }

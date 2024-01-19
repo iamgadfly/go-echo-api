@@ -5,7 +5,7 @@ import (
 	"encoding/csv"
 	"github.com/iamgadfly/go-echo-api/config"
 	"github.com/iamgadfly/go-echo-api/internal/models"
-	"github.com/iamgadfly/go-echo-api/internal/products/repository"
+	"github.com/iamgadfly/go-echo-api/internal/products"
 	"github.com/iamgadfly/go-echo-api/pkg/parse/avito"
 	"github.com/iamgadfly/go-echo-api/pkg/parse/ozon"
 	"github.com/iamgadfly/go-echo-api/pkg/parse/wb"
@@ -19,11 +19,11 @@ import (
 
 type ProductUseCase struct {
 	cfg         *config.Config
-	productRepo *repository.ProductRepo
+	productRepo products.Repository
 	logger      *zap.SugaredLogger
 }
 
-func NewProductUseCase(cfg *config.Config, productRepo *repository.ProductRepo, logger *zap.SugaredLogger) ProductUseCase {
+func NewProductUseCase(cfg *config.Config, productRepo products.Repository, logger *zap.SugaredLogger) ProductUseCase {
 	return ProductUseCase{
 		cfg:         cfg,
 		productRepo: productRepo,
@@ -58,22 +58,35 @@ func (p ProductUseCase) ParseByLink(link string) (models.Product, error) {
 
 func (p ProductUseCase) ParseWbCat(urls []string) error {
 	for _, link := range urls {
-		go p.parseProducts(context.Background(), link)
-	}
+		go func() {
+			p.parseProducts(context.Background(), link)
+		}()
 
+	}
 	return nil
 }
 
-func (p ProductUseCase) parseProducts(ctx context.Context, link string) {
+func (p ProductUseCase) parseProducts(ctx context.Context, link string) error {
+	//products := make([]models.Product, 200
 	var products []models.Product
-	body, _ := wb.SendData(ctx, link)
+
+	body, err := wb.SendData(ctx, link)
+	if err != nil {
+		return err
+	}
+
 	i := 0
 	for {
-		Name := gjson.Get(body, "data.products."+strconv.Itoa(i)+".name").String()
-		ShopId := gjson.Get(body, "data.products."+strconv.Itoa(i)+".id").Int()
-		SalePrice := gjson.Get(body, "data.products."+strconv.Itoa(i)+".salePriceU").Int() / 100
-		Price := gjson.Get(body, "data.products."+strconv.Itoa(i)+".priceU").Int() / 100
-		Color := gjson.Get(body, "data.products."+strconv.Itoa(i)+".colors.0.name").String()
+		iStr := strconv.Itoa(i)
+		Name := gjson.Get(body, "data.products."+iStr+".name").String()
+		ShopId := gjson.Get(body, "data.products."+iStr+".id").Int()
+		SalePrice := gjson.Get(body, "data.products."+iStr+".salePriceU").Int() / 100
+		Price := gjson.Get(body, "data.products."+iStr+".priceU").Int() / 100
+		Color := gjson.Get(body, "data.products."+iStr+".colors.0.name").String()
+
+		if int(ShopId) == 0 {
+			break
+		}
 
 		products = append(products, models.Product{
 			Name:      Name,
@@ -85,12 +98,14 @@ func (p ProductUseCase) parseProducts(ctx context.Context, link string) {
 		})
 
 		i++
-		if Name == "" {
-			break
-		}
 	}
 
-	p.productRepo.CreateBatch(products)
+	err = p.productRepo.CreateBatch(products)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (p ProductUseCase) WriteCsv() error {
@@ -115,4 +130,12 @@ func (p ProductUseCase) WriteCsv() error {
 	}
 
 	return nil
+}
+
+func (p ProductUseCase) Search(ctx context.Context, word string) ([]models.Product, error) {
+	products, err := p.productRepo.Search(ctx, word)
+	if err != nil {
+		return []models.Product{}, err
+	}
+	return products, nil
 }
