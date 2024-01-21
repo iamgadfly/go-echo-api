@@ -20,3 +20,6 @@ migrate_up:
 
 migrate_down:
 	migrate -database "mysql://go:12345678@tcp(localhost:3306)/go_api" -path migrations down 1
+
+migrate_create:
+	 migrate create -ext sql -dir migrations/ ${name}

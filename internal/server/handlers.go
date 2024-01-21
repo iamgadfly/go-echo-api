@@ -4,6 +4,9 @@ import (
 	productHttp "github.com/iamgadfly/go-echo-api/internal/products/delivery/http"
 	productRepository "github.com/iamgadfly/go-echo-api/internal/products/repository"
 	productUC "github.com/iamgadfly/go-echo-api/internal/products/usecase"
+	vacancyHttp "github.com/iamgadfly/go-echo-api/internal/vacancies/delivery/http"
+	vacancyRepository "github.com/iamgadfly/go-echo-api/internal/vacancies/repository"
+	vacancyUC "github.com/iamgadfly/go-echo-api/internal/vacancies/usecase"
 
 	userHttp "github.com/iamgadfly/go-echo-api/internal/users/delivery/http"
 	userRepository "github.com/iamgadfly/go-echo-api/internal/users/repository"
@@ -21,13 +24,17 @@ func (s *Server) MapHandlers(e *echo.Echo) error {
 	usersGroup := v1.Group("/users")
 	userHttp.MapUserRoutes(usersGroup, userHandlers)
 
-	//pRepo := products.Repository.
 	pRepo := productRepository.NewUProductsRepository(s.db, s.logger)
 	productUC := productUC.NewProductUseCase(s.cfg, pRepo, s.logger)
 	productHandlers := productHttp.NewProductHandlers(productUC, s.cfg, s.logger)
-	//pRepo := productHttp.NewProductHandlers()
 	productsGroup := v1.Group("/products")
 	productHttp.MapProductRoutes(productsGroup, productHandlers)
+
+	vRepo := vacancyRepository.NewVacanciesRepository(s.db)
+	vacancyUC := vacancyUC.NewVacancyUseCase(s.cfg, vRepo, s.logger)
+	vacancyHandlers := vacancyHttp.NewVacancyHandlers(s.cfg, s.logger, vacancyUC)
+	vacanciesGroup := v1.Group("/vacancy")
+	vacancyHttp.MapVacancyRoutes(vacanciesGroup, vacancyHandlers)
 
 	//newsHttp.MapNewsRoutes(newsGroup, newsHandlers, mw)
 
