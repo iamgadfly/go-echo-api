@@ -1,7 +1,10 @@
 package vacancies
 
-import "github.com/iamgadfly/go-echo-api/internal/models"
+import (
+	"context"
+	"github.com/iamgadfly/go-echo-api/internal/models"
+)
 
 type UseCase interface {
-	Create(link string) (models.Vacancy, error)
+	Create(ctx context.Context, link string) (*models.Vacancy, error)
 }

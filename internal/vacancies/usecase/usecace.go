@@ -1,9 +1,11 @@
 package usecase
 
 import (
+	"context"
 	"github.com/iamgadfly/go-echo-api/config"
 	"github.com/iamgadfly/go-echo-api/internal/models"
 	"github.com/iamgadfly/go-echo-api/internal/vacancies"
+	"github.com/iamgadfly/go-echo-api/pkg/parse/hh"
 	"go.uber.org/zap"
 )
 
@@ -21,6 +23,15 @@ func NewVacancyUseCase(cfg *config.Config, repository vacancies.Repository, logg
 	}
 }
 
-func (v VacancyUC) Create(link string) (models.Vacancy, error) {
-	return models.Vacancy{}, nil
+func (v VacancyUC) Create(ctx context.Context, link string) (*models.Vacancy, error) {
+	vacancy, err := hh.Parse(ctx, link)
+	if err != nil {
+		return &models.Vacancy{}, err
+	}
+	res, err := v.vacancyRepo.Create(&vacancy)
+	if err != nil {
+		return &models.Vacancy{}, err
+	}
+
+	return res, nil
 }
