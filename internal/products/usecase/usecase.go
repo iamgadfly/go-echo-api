@@ -57,12 +57,31 @@ func (p ProductUseCase) ParseByLink(link string) (models.Product, error) {
 }
 
 func (p ProductUseCase) ParseWbCat(urls []string) error {
+	//products := make(chan []models.Product)
+	//err := make(chan error)
+	//var wg sync.WaitGroup
+	products := make(chan []models.Product)
+	er := make(chan error, 10)
+
 	for _, link := range urls {
-		go func() {
-			p.parseProducts(context.Background(), link)
-		}()
+		go wb.ParseProducts(context.Background(), link, products, er)
+
+		err := <-er
+		if err != nil {
+			return err
+		}
+
+		//fmt.Println(link, len(<-products), err)
+		e := p.productRepo.CreateBatch(<-products)
+		if e != nil {
+			return e
+		}
 
 	}
+
+	close(products)
+	close(er)
+
 	return nil
 }
 

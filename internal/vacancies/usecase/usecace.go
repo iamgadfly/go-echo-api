@@ -28,7 +28,7 @@ func (v VacancyUC) Create(ctx context.Context, link string) (*models.Vacancy, er
 	if err != nil {
 		return &models.Vacancy{}, err
 	}
-	res, err := v.vacancyRepo.Create(&vacancy)
+	res, err := v.vacancyRepo.Create(vacancy)
 	if err != nil {
 		return &models.Vacancy{}, err
 	}

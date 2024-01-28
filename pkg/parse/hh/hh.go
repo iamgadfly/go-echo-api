@@ -23,7 +23,7 @@ type ResultApi struct {
 	Status     map[string]string `json:"type"`
 }
 
-func Parse(ctx context.Context, link string) (models.Vacancy, error) {
+func Parse(ctx context.Context, link string) (*models.Vacancy, error) {
 	var res ResultApi
 	var salary string
 	splitLink := strings.Split(link, "/")
@@ -31,10 +31,10 @@ func Parse(ctx context.Context, link string) (models.Vacancy, error) {
 	idInt, _ := strconv.Atoi(id)
 	resp, err := getDataById(ctx, id)
 	if err != nil {
-		return models.Vacancy{}, err
+		return &models.Vacancy{}, err
 	}
 	if err := json.Unmarshal([]byte(resp), &res); err != nil {
-		return models.Vacancy{}, err
+		return &models.Vacancy{}, err
 	}
 
 	if res.Salary != nil {
@@ -43,7 +43,7 @@ func Parse(ctx context.Context, link string) (models.Vacancy, error) {
 		salary = from + "-" + to + " " + res.Salary["currency"].(string)
 	}
 
-	return models.Vacancy{
+	return &models.Vacancy{
 		Name:        res.Name,
 		VacancyId:   idInt,
 		Experience:  res.Experience["name"],

@@ -41,6 +41,10 @@ func (r ProductRepo) SearchByShopId(prod models.Product) error {
 }
 
 func (r ProductRepo) CreateBatch(products []models.Product) error {
+	if len(products) == 0 {
+		return nil
+	}
+
 	_, err := r.db.NamedExec(CreateBatch, products)
 	if err != nil {
 		return err

@@ -9,8 +9,10 @@ require (
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/labstack/echo/v4 v4.11.3
 	github.com/spf13/viper v1.17.0
+	github.com/tidwall/gjson v1.17.0
 	go.uber.org/zap v1.26.0
 	golang.org/x/crypto v0.16.0
+	golang.org/x/sync v0.3.0
 )
 
 require (
@@ -62,7 +64,6 @@ require (
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/subosito/gotenv v1.6.0 // indirect
 	github.com/temoto/robotstxt v1.1.2 // indirect
-	github.com/tidwall/gjson v1.17.0 // indirect
 	github.com/tidwall/match v1.1.1 // indirect
 	github.com/tidwall/pretty v1.2.0 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect

@@ -53,7 +53,7 @@ func (h *ProductHandlers) ParseWbCat() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		data, _ := req.ParseReq(c)
 		var urls []string
-		for n := 1; n <= 100; n++ {
+		for n := 1; n <= 52; n++ {
 			urls = append(urls, data["link"].(string)+"&page="+strconv.Itoa(n))
 		}
 
