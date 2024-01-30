@@ -7,4 +7,5 @@ func MapProductRoutes(e *echo.Group, h ProductHandlers) {
 	e.POST("/get_csv", h.GetCsv())
 	e.POST("/parse_cat_wb", h.ParseWbCat())
 	e.POST("/search", h.Search())
+	e.GET("/:id", h.GetById())
 }

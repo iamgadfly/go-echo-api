@@ -70,3 +70,11 @@ func (r ProductRepo) Search(ctx context.Context, word string) ([]models.Product,
 
 	return products, nil
 }
+func (r ProductRepo) GetById(ctx context.Context, id int) (*models.Product, error) {
+	prod := models.Product{}
+	err := r.db.Get(&prod, GetById, id)
+	if err != nil && err.Error() != "sql: no rows in result set" {
+		return nil, err
+	}
+	return &prod, nil
+}

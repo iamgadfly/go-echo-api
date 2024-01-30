@@ -7,6 +7,7 @@ import (
 	"github.com/iamgadfly/go-echo-api/internal/vacancies"
 	"github.com/iamgadfly/go-echo-api/pkg/parse/hh"
 	"go.uber.org/zap"
+	"strconv"
 )
 
 type VacancyUC struct {
@@ -34,4 +35,18 @@ func (v VacancyUC) Create(ctx context.Context, link string) (*models.Vacancy, er
 	}
 
 	return res, nil
+}
+
+func (v VacancyUC) GetById(ctx context.Context, rawId string) (*models.Vacancy, error) {
+	id, err := strconv.Atoi(rawId)
+	if err != nil {
+		return nil, err
+	}
+
+	vacancy, er := v.vacancyRepo.FindById(id)
+	if er != nil {
+		return nil, er
+	}
+
+	return vacancy, nil
 }

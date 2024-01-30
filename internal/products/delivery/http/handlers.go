@@ -78,3 +78,16 @@ func (h *ProductHandlers) Search() echo.HandlerFunc {
 		return c.JSON(http.StatusOK, res)
 	}
 }
+
+func (h *ProductHandlers) GetById() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		ctx, cancel := context.WithTimeout(context.Background(), time.Duration(time.Second*10))
+		defer cancel()
+		res, err := h.productUC.GetById(ctx, c.Param("id"))
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, err.Error())
+		}
+
+		return c.JSON(http.StatusOK, res)
+	}
+}

@@ -39,3 +39,12 @@ func (r VacanciesRepo) FindByVacancyId(id int) (models.Vacancy, error) {
 	}
 	return vacancy, nil
 }
+
+func (r VacanciesRepo) FindById(id int) (*models.Vacancy, error) {
+	vacancy := models.Vacancy{}
+	err := r.db.Get(&vacancy, FindById, id)
+	if err != nil && err.Error() != "sql: no rows in result set" {
+		return nil, err
+	}
+	return &vacancy, nil
+}

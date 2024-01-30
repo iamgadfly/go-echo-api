@@ -7,4 +7,5 @@ import (
 
 type UseCase interface {
 	Create(ctx context.Context, link string) (*models.Vacancy, error)
+	GetById(ctx context.Context, id string) (*models.Vacancy, error)
 }

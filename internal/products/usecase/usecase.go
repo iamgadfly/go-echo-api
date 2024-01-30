@@ -158,3 +158,16 @@ func (p ProductUseCase) Search(ctx context.Context, word string) ([]models.Produ
 	}
 	return products, nil
 }
+
+func (p ProductUseCase) GetById(ctx context.Context, idSt string) (*models.Product, error) {
+	id, err := strconv.Atoi(idSt)
+	if err != nil {
+		return nil, err
+	}
+	prod, er := p.productRepo.GetById(ctx, id)
+	if er != nil {
+		return nil, er
+	}
+
+	return prod, nil
+}
