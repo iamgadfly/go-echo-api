@@ -11,6 +11,7 @@ import (
 	"github.com/iamgadfly/go-echo-api/pkg/parse/wb"
 	"github.com/tidwall/gjson"
 	"go.uber.org/zap"
+	"net/url"
 	"os"
 	"strconv"
 	"strings"
@@ -32,8 +33,14 @@ func NewProductUseCase(cfg *config.Config, productRepo products.Repository, logg
 }
 
 func (p ProductUseCase) ParseByLink(link string) (models.Product, error) {
+	url, er := url.ParseRequestURI(link)
+	if er != nil {
+		return models.Product{}, er
+	}
+	link = url.String()
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(time.Second*15))
 	defer cancel()
+
 	var err error
 	var prod models.Product
 	domain := strings.Split(link, "/")
@@ -46,20 +53,16 @@ func (p ProductUseCase) ParseByLink(link string) (models.Product, error) {
 		prod, err = ozon.Parse(link)
 	}
 	if err != nil {
-		return prod, err
+		return models.Product{}, err
 	}
 	err = p.productRepo.SearchByShopId(prod)
 	if err != nil {
-		return prod, err
+		return models.Product{}, err
 	}
-
 	return prod, nil
 }
 
 func (p ProductUseCase) ParseWbCat(urls []string) error {
-	//products := make(chan []models.Product)
-	//err := make(chan error)
-	//var wg sync.WaitGroup
 	products := make(chan []models.Product)
 	er := make(chan error, 10)
 

@@ -43,6 +43,7 @@ type Logger struct {
 
 // MysqlConfig config
 type MysqlConfig struct {
+	IsDocker      bool
 	MysqlHost     string
 	MysqlPort     string
 	MysqlUser     string

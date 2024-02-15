@@ -20,6 +20,7 @@ logger:
   Level: info
 
 mysql:
+  IsDocker: false
   MysqlHost: localhost
   MysqlPort: 3306
   MysqlUser: go

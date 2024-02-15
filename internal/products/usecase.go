@@ -11,7 +11,4 @@ type ProductUseCase interface {
 	ParseWbCat(urls []string) error
 	Search(ctx context.Context, string string) ([]models.Product, error)
 	GetById(ctx context.Context, id string) (*models.Product, error)
-	//Find(id interface{}) (models.Product, error)
-	//Update(product *models.Product) (models.Product, error)
-	//GetProducts() ([]models.Product, error)
 }

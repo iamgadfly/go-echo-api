@@ -8,6 +8,6 @@ const (
 
 	CreateBatch = `INSERT INTO products (name,price,sale_price,color,shop_id, link)
 	VALUES (:name, :price, :sale_price, :color, :shop_id, :link) ON DUPLICATE KEY UPDATE sale_price=sale_price AND price=price`
-	Search  = `SELECT id, name, price, sale_price, IFNULL(color, "") as color, IFNULL(link, "") as link from products WHERE name LIKE ?`
+	Search  = `SELECT DISTINCT id, name, price, sale_price, IFNULL(color, "") as color, IFNULL(link, "") as link from products WHERE name LIKE ?`
 	GetById = `SELECT id, name, price, sale_price, IFNULL(color, "") as color, IFNULL(link, "") as link from products WHERE id= ?`
 )

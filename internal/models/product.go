@@ -16,3 +16,11 @@ type Product struct {
 type ProductList struct {
 	Products *[]Product `json:"products"`
 }
+
+type ProductLink struct {
+	Link string `json:"link"`
+}
+
+type ProductWord struct {
+	Word string `json:"word"`
+}

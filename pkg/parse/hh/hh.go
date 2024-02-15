@@ -39,7 +39,10 @@ func Parse(ctx context.Context, link string) (*models.Vacancy, error) {
 
 	if res.Salary != nil {
 		from := strconv.FormatFloat(res.Salary["from"].(float64), 'f', 0, 64)
-		to := strconv.FormatFloat(res.Salary["to"].(float64), 'f', 0, 64)
+		var to string
+		if res.Salary["to"] != nil {
+			to = strconv.FormatFloat(res.Salary["to"].(float64), 'f', 0, 64)
+		}
 		salary = from + "-" + to + " " + res.Salary["currency"].(string)
 	}
 

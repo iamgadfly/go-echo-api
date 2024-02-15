@@ -52,12 +52,16 @@ func ParseByLink(ctx context.Context, link string) (models.Product, error) {
 
 	json.Unmarshal([]byte(resp), &data)
 	ShopId, _ := strconv.Atoi(id)
+	var color string
+	if len(data.Data.Prods[0].Color) != 0 {
+		color = data.Data.Prods[0].Color[0]["name"]
+	}
 
 	return models.Product{
 		Name:      data.Data.Prods[0].Name,
 		SalePrice: int64(data.Data.Prods[0].SalePrice / 100),
 		Price:     int64(data.Data.Prods[0].Price / 100),
-		Color:     data.Data.Prods[0].Color[0]["name"],
+		Color:     color,
 		ShopId:    ShopId,
 		Link:      link,
 	}, nil

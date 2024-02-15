@@ -27,6 +27,13 @@ func NewProductHandlers(productUC usecase.ProductUseCase, cfg *config.Config, lo
 	}
 }
 
+// ParseByLink
+// @Summary Parse By Link
+// @tags products
+// @description Parse by link
+// @Param link body models.ProductLink true "link on product"
+// @success 200 {object} models.Product
+// @router /api/v1/products/parse [post]
 func (h *ProductHandlers) ParseByLink() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		data, _ := req.ParseReq(c)
@@ -38,6 +45,14 @@ func (h *ProductHandlers) ParseByLink() echo.HandlerFunc {
 	}
 }
 
+// GetCsv
+// @Summary Get Csv
+// @tags products
+// @description Parse by link
+// @accept json
+// @produce json
+// @success 200 {string} string "created at"
+// @router /api/v1/products/get_csv [post]
 func (h *ProductHandlers) GetCsv() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		err := h.productUC.WriteCsv()
@@ -66,6 +81,15 @@ func (h *ProductHandlers) ParseWbCat() echo.HandlerFunc {
 	}
 }
 
+// Search
+// @Summary Get by product i
+// @tags products
+// @description Get product by word
+// @Param word body models.ProductWord true "word to search"
+// @accept json
+// @produce json
+// @success 200 {object} []models.Product
+// @router /api/v1/products/search [post]
 func (h *ProductHandlers) Search() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		ctx, cancel := context.WithTimeout(context.Background(), time.Duration(time.Second*10))
@@ -79,6 +103,15 @@ func (h *ProductHandlers) Search() echo.HandlerFunc {
 	}
 }
 
+// GetById
+// @Summary Get by product i
+// @tags products
+// @description Get by product id
+// @Param id path int true "product id"
+// @accept json
+// @produce json
+// @success 200 {object} models.Product
+// @router /api/v1/products/{id} [get]
 func (h *ProductHandlers) GetById() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		ctx, cancel := context.WithTimeout(context.Background(), time.Duration(time.Second*10))

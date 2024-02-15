@@ -1,0 +1,205 @@
+basePath: /
+definitions:
+  models.Product:
+    properties:
+      address:
+        type: string
+      color:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      image:
+        type: string
+      link:
+        type: string
+      name:
+        type: string
+      price:
+        type: integer
+      sale_price:
+        type: integer
+      shop_id:
+        type: integer
+    type: object
+  models.ProductLink:
+    properties:
+      link:
+        type: string
+    type: object
+  models.ProductWord:
+    properties:
+      word:
+        type: string
+    type: object
+  models.Vacancy:
+    properties:
+      company_name:
+        type: string
+      company_url:
+        type: string
+      created_at:
+        type: string
+      desc:
+        type: string
+      experience:
+        type: string
+      id:
+        type: integer
+      link:
+        type: string
+      name:
+        type: string
+      remote:
+        type: string
+      salary:
+        type: string
+      skills:
+        type: string
+      status:
+        type: string
+      updated_at:
+        type: string
+      vacancy_id:
+        type: integer
+    type: object
+  models.VacancyLink:
+    properties:
+      link:
+        type: string
+    type: object
+host: localhost:8000
+info:
+  contact: {}
+  description: app for parse
+  title: App Parser
+  version: "1.0"
+paths:
+  /api/v1/products/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get by product id
+      parameters:
+      - description: product id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Product'
+      summary: Get by product i
+      tags:
+      - products
+  /api/v1/products/get_csv:
+    post:
+      consumes:
+      - application/json
+      description: Parse by link
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: created at
+          schema:
+            type: string
+      summary: Get Csv
+      tags:
+      - products
+  /api/v1/products/parse:
+    post:
+      description: Parse by link
+      parameters:
+      - description: link on product
+        in: body
+        name: link
+        required: true
+        schema:
+          $ref: '#/definitions/models.ProductLink'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Product'
+      summary: Parse By Link
+      tags:
+      - products
+  /api/v1/products/search:
+    post:
+      consumes:
+      - application/json
+      description: Get product by word
+      parameters:
+      - description: word to search
+        in: body
+        name: word
+        required: true
+        schema:
+          $ref: '#/definitions/models.ProductWord'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Product'
+            type: array
+      summary: Get by product i
+      tags:
+      - products
+  /api/v1/vacancy/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get vacancy by id
+      parameters:
+      - description: vacancy id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Vacancy'
+      summary: Get vacancies by id
+      tags:
+      - vacancy
+  /api/v1/vacancy/create:
+    post:
+      consumes:
+      - application/json
+      description: Create vacancy by link
+      parameters:
+      - description: link to parse
+        in: body
+        name: word
+        required: true
+        schema:
+          $ref: '#/definitions/models.VacancyLink'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Vacancy'
+      summary: Create vacancies by link
+      tags:
+      - vacancy
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
