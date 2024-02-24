@@ -1,0 +1,34 @@
+syntax = "proto3";
+option go_package = "github.com/iamgadfly/go-echo-api/proto/user";
+
+package user_v1;
+
+
+service User {
+  rpc Get(UserIdRequest) returns (UserResponse);
+  rpc GetUsers(EmptyParams) returns (UserResponseList);
+}
+
+message EmptyParams {}
+
+message UserData {
+  uint64 id = 1;
+  string name = 2;
+  string surname = 3;
+  string email = 4;
+  uint64 balance = 5;
+  bool is_register_social = 6;
+  bool is_paid = 7;
+  string role = 8;
+}
+
+message UserIdRequest {
+  uint64 user_id = 1;
+}
+
+message UserResponseList {
+  repeated UserData data = 1;
+}
+message UserResponse {
+  UserData data = 1;
+}

@@ -6,6 +6,7 @@ import (
 	"github.com/jmoiron/sqlx"
 	"github.com/labstack/echo/v4"
 	"go.uber.org/zap"
+	"log"
 	"time"
 )
 
@@ -30,15 +31,20 @@ func NewServer(cfg *config.Config, port string, db *sqlx.DB, logger *zap.Sugared
 	return &Server{cfg: cfg, echo: echo.New(), db: db, port: port, logger: logger}
 }
 
-func (s *Server) Run() error {
+func (s *Server) Run(er chan error) {
+	log.Println("staring http server!")
 	if err := s.MapHandlers(s.echo); err != nil {
-		return err
+		er <- err
 	}
 	if err := s.echo.Start(s.port); err != nil {
-		return err
+		er <- err
 	}
 
 	ctx, shutdown := context.WithTimeout(context.Background(), ctxTimeout*time.Second)
 	defer shutdown()
-	return s.echo.Server.Shutdown(ctx)
+	err := s.echo.Server.Shutdown(ctx)
+	if err != nil {
+		er <- err
+	}
+	er <- nil
 }

@@ -39,13 +39,13 @@ func (r *UsersRepo) Create(user *models.User) (*models.User, error) {
 	return res, nil
 }
 
-func (r *UsersRepo) GetUsers() ([]models.User, error) {
+func (r *UsersRepo) GetUsers() (*[]models.User, error) {
 	var list []models.User
 	err := r.db.Select(&list, GetUsers)
 	if err != nil {
-		return list, err
+		return nil, err
 	}
-	return list, nil
+	return &list, nil
 }
 
 func (r *UsersRepo) Login(u models.UserLogin) (models.User, error) {

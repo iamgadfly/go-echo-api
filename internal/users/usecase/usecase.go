@@ -32,7 +32,7 @@ func (u userUC) Register(c echo.Context, user *models.User) (*models.User, error
 	return createUser, nil
 }
 
-func (u userUC) GetUsers() ([]models.User, error) {
+func (u userUC) GetUsers() (*[]models.User, error) {
 	userList, err := u.userRepo.GetUsers()
 	if err != nil {
 		return userList, err

@@ -7,7 +7,7 @@ import (
 
 type UseCase interface {
 	Register(c echo.Context, user *models.User) (*models.User, error)
-	GetUsers() ([]models.User, error)
+	GetUsers() (*[]models.User, error)
 	Login(u models.UserLogin) (models.UserWithToken, error)
 	GetByID(id interface{}) (*models.User, error)
 }

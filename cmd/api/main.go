@@ -3,6 +3,7 @@ package main
 import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/iamgadfly/go-echo-api/config"
+	"github.com/iamgadfly/go-echo-api/internal/grpcserver"
 	"github.com/iamgadfly/go-echo-api/internal/server"
 	mysql "github.com/iamgadfly/go-echo-api/pkg/mysql"
 	"go.uber.org/zap"
@@ -12,14 +13,13 @@ import (
 
 // @title App Parser
 // @version 1.0
-// @description app for parse
+// @descriptioаn app for parse
 // @host localhost:8000
 // @BasePath /
 // @securityDefinitions.apikey ApiKeyAuth
 // @in header
 // @name Authorization
 func main() {
-	log.Println("Starting api server")
 	cfgFile, err := config.LoadConfig("config/config-local.yml")
 	if err != nil {
 		log.Fatalf("LoadConfig: %v", err)
@@ -39,15 +39,27 @@ func main() {
 		log.Fatal(err)
 	}
 
-	logger, er := zap.NewProduction()
-	if er != nil {
+	logger, err := zap.NewProduction()
+	if err != nil {
 		log.Fatal(err)
 	}
 
 	sugar := logger.Sugar()
+
+	er := make(chan error, 2)
+
+	grpcServer := grpcserver.NewServerGRPC(db, cfg, sugar)
 	s := server.NewServer(cfg, cfg.Server.Port, db, sugar)
 
-	if err = s.Run(); err != nil {
-		log.Fatal(err)
+	go grpcServer.Run(er)
+	go s.Run(er)
+
+	//if err = ; err != nil {
+	//log.Fatal(err)
+	//}
+
+	select {
+	case err = <-er:
+		log.Fatalf("Server error: %v\n", err.Error())
 	}
 }
