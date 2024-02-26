@@ -5,7 +5,7 @@ import (
 	"github.com/iamgadfly/go-echo-api/config"
 	"github.com/iamgadfly/go-echo-api/internal/grpcserver"
 	"github.com/iamgadfly/go-echo-api/internal/server"
-	mysql "github.com/iamgadfly/go-echo-api/pkg/mysql"
+	"github.com/iamgadfly/go-echo-api/pkg/mysql"
 	"go.uber.org/zap"
 	"log"
 	"time"
@@ -13,7 +13,7 @@ import (
 
 // @title App Parser
 // @version 1.0
-// @descriptioаn app for parse
+// @description app for parse
 // @host localhost:8000
 // @BasePath /
 // @securityDefinitions.apikey ApiKeyAuth
@@ -45,7 +45,6 @@ func main() {
 	}
 
 	sugar := logger.Sugar()
-
 	er := make(chan error, 2)
 
 	grpcServer := grpcserver.NewServerGRPC(db, cfg, sugar)
@@ -53,10 +52,6 @@ func main() {
 
 	go grpcServer.Run(er)
 	go s.Run(er)
-
-	//if err = ; err != nil {
-	//log.Fatal(err)
-	//}
 
 	select {
 	case err = <-er:

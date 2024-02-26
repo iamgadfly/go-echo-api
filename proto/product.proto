@@ -1,0 +1,43 @@
+syntax = "proto3";
+option go_package = "github.com/iamgadfly/go-echo-api/proto/product";
+
+package product_v1;
+
+service Product {
+    rpc Create(CreateRequest) returns (ProductResponse);
+    rpc GetById(GetByIdRequest) returns (ProductResponse);
+    rpc Search(SearchRequest) returns (ProductListResponse);
+}
+
+message ProductData {
+  uint64 id = 1;
+  string name = 2;
+  uint64 price = 3;
+  uint64 sale_price = 4;
+  string  description = 5;
+  string image = 6;
+  int64 shop_id = 7;
+  string address = 8;
+  string color = 9;
+  string link = 10;
+}
+
+message CreateRequest {
+  string link = 1;
+}
+
+message SearchRequest {
+  string word = 1;
+}
+
+message GetByIdRequest {
+  uint64 id = 1;
+}
+
+message ProductResponse {
+  ProductData data = 1;
+}
+
+message ProductListResponse {
+  repeated ProductData data = 1;
+}

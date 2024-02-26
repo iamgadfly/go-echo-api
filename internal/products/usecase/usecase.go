@@ -136,8 +136,8 @@ func (p ProductUseCase) WriteCsv() error {
 		return err
 	}
 
-	time := strconv.Itoa(int(time.Now().Unix()))
-	file, err := os.Create("storage/products-" + time + ".csv")
+	timeCreate := strconv.Itoa(int(time.Now().Unix()))
+	file, err := os.Create("storage/products-" + timeCreate + ".csv")
 	if err != nil {
 		return err
 	}

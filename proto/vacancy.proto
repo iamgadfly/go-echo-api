@@ -1,0 +1,38 @@
+syntax = "proto3";
+option go_package = "github.com/iamgadfly/go-echo-api/proto/vacancy";
+
+package vacancy_v1;
+
+service Vacancy {
+    rpc Create(CreateRequest) returns (VacancyResponse);
+    rpc GetById(GetByIdRequest) returns (VacancyResponse);
+}
+
+message VacancyData {
+  uint64 id = 1;
+  string name = 2;
+  uint64 vacancy_id = 3;
+  string experience = 4;
+  string remote = 5;
+  string salary = 6;
+  string status = 7;
+  string link = 8;
+  string description = 9;
+  string skills = 10;
+  string company_name = 11;
+  string company_url = 12;
+  string created_at = 13;
+  string updated_at = 14;
+}
+
+message CreateRequest {
+  string link = 1;
+}
+
+message GetByIdRequest {
+  uint64 id = 1;
+}
+
+message VacancyResponse {
+  VacancyData data = 1;
+}
