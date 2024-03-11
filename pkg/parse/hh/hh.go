@@ -3,6 +3,7 @@ package hh
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"github.com/iamgadfly/go-echo-api/internal/models"
 	"io/ioutil"
 	"net/http"
@@ -24,10 +25,23 @@ type ResultApi struct {
 }
 
 func Parse(ctx context.Context, link string) (*models.Vacancy, error) {
-	var res ResultApi
-	var salary string
+	var (
+		res    ResultApi
+		salary string
+	)
+
 	splitLink := strings.Split(link, "/")
-	id := splitLink[4][:strings.IndexAny(splitLink[4], "?")]
+	var id string
+	if len(splitLink[3]) != 0 {
+		if strings.Contains(splitLink[4], "?") {
+			id = splitLink[4][:strings.IndexAny(splitLink[4], "?")]
+		} else {
+			id = splitLink[4]
+		}
+	} else {
+		return nil, errors.New("wrong url format")
+	}
+
 	idInt, _ := strconv.Atoi(id)
 	resp, err := getDataById(ctx, id)
 	if err != nil {
@@ -35,6 +49,9 @@ func Parse(ctx context.Context, link string) (*models.Vacancy, error) {
 	}
 	if err := json.Unmarshal([]byte(resp), &res); err != nil {
 		return &models.Vacancy{}, err
+	}
+	if res.ID == "" {
+		return nil, errors.New("vacancy not found")
 	}
 
 	if res.Salary != nil {

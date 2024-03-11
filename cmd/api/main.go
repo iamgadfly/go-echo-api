@@ -45,7 +45,7 @@ func main() {
 	}
 
 	sugar := logger.Sugar()
-	er := make(chan error, 2)
+	er := make(chan error)
 
 	grpcServer := grpcserver.NewServerGRPC(db, cfg, sugar)
 	s := server.NewServer(cfg, cfg.Server.Port, db, sugar)
@@ -55,6 +55,8 @@ func main() {
 
 	select {
 	case err = <-er:
-		log.Fatalf("Server error: %v\n", err.Error())
+		if err != nil {
+			log.Fatalf("Server error: %v\n", err.Error())
+		}
 	}
 }

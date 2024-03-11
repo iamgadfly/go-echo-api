@@ -5,7 +5,7 @@ import (
 	"github.com/iamgadfly/go-echo-api/internal/models"
 )
 
-type Repository interface {
+type ProductRepository interface {
 	GetProducts() ([]models.Product, error)
 	CreateBatch(products []models.Product) error
 	SearchByShopId(prod models.Product) error

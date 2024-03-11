@@ -12,11 +12,11 @@ import (
 
 type VacancyUC struct {
 	cfg         *config.Config
-	vacancyRepo vacancies.Repository
+	vacancyRepo vacancies.VacancyRepository
 	logger      *zap.SugaredLogger
 }
 
-func NewVacancyUseCase(cfg *config.Config, repository vacancies.Repository, logger *zap.SugaredLogger) VacancyUC {
+func NewVacancyUseCase(cfg *config.Config, repository vacancies.VacancyRepository, logger *zap.SugaredLogger) VacancyUC {
 	return VacancyUC{
 		cfg:         cfg,
 		vacancyRepo: repository,

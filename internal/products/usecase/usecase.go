@@ -20,11 +20,11 @@ import (
 
 type ProductUseCase struct {
 	cfg         *config.Config
-	productRepo products.Repository
+	productRepo products.ProductRepository
 	logger      *zap.SugaredLogger
 }
 
-func NewProductUseCase(cfg *config.Config, productRepo products.Repository, logger *zap.SugaredLogger) ProductUseCase {
+func NewProductUseCase(cfg *config.Config, productRepo products.ProductRepository, logger *zap.SugaredLogger) ProductUseCase {
 	return ProductUseCase{
 		cfg:         cfg,
 		productRepo: productRepo,
